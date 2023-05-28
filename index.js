@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors')
 const port = process.env.PORT || 5000;
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 
@@ -69,6 +69,13 @@ async function run() {
             }
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        // delete from cart 
+        app.delete('/carts/:id', async (req, res) => {
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query)
             res.send(result)
         })
 
