@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors')
 const port = process.env.PORT || 5000;
 require('dotenv').config();
+const jwt = require('jsonwebtoken');  
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
@@ -38,6 +39,9 @@ async function run() {
         const reviewCollection = client.db('bistroDB').collection('reviews');
         const cartCollection = client.db('bistroDB').collection('carts');
         const usersCollection = client.db('bistroDB').collection('users');
+
+        // JWT 
+        app.post()
 
         // menu collection 
         // get menus 
@@ -99,6 +103,19 @@ async function run() {
         // get users
         app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray();
+            res.send(result)
+        });
+
+        // update users 
+        app.patch('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const updatedUser = {
+                $set: {
+                    role: 'admin',
+                }
+            }
+            const result = await usersCollection.updateOne(query, updatedUser)
             res.send(result)
         })
 
