@@ -80,6 +80,12 @@ async function run() {
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
             res.send(result);
+        });
+        // post menus 
+        app.post('/menu', async (req, res) => {
+            const newItem = req.body;
+            const result = await menuCollection.insertOne(newItem);
+            res.send(result)
         })
 
         // reviews collection 
@@ -139,7 +145,7 @@ async function run() {
         });
 
         // get users
-        app.get('/users', verifyJWT,verifyAdmin, async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result)
         });
