@@ -82,13 +82,21 @@ async function run() {
             res.send(result);
         });
         // post menus 
-        app.post('/menu', async (req, res) => {
+        app.post('/menu', verifyJWT, verifyAdmin, async (req, res) => {
             const newItem = req.body;
             const result = await menuCollection.insertOne(newItem);
             res.send(result)
+        });
+        // delete menu item 
+        app.delete('/menu/:id',verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await menuCollection.deleteOne(query);
+            res.send(result);
         })
 
-        // reviews collection 
+
+        // reviews collection .....................................................................................
         // get reviews 
         app.get('/review', async (req, res) => {
             const result = await reviewCollection.find().toArray();
