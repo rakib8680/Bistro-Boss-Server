@@ -160,7 +160,7 @@ async function run() {
             const result = await paymentCollection.insertOne(payment);
             const query = { _id: { $in: payment.cartItems.map(id => new ObjectId(id)) } }
             const deletedResult = await cartCollection.deleteMany(query)
-            res.send(result, deletedResult)
+            res.send({ result, deletedResult })
         })
 
 
@@ -211,7 +211,25 @@ async function run() {
             }
             const result = await usersCollection.updateOne(query, updatedUser)
             res.send(result)
+        });
+
+
+
+
+        // admin stats  .........................................................................................
+        // get stats 
+        app.get('/admin-stats', verifyJWT, verifyAdmin, async (req, res) => {
+            const users = await usersCollection.estimatedDocumentCount();
+            const products = await menuCollection.estimatedDocumentCount();
+            const orders = await paymentCollection.estimatedDocumentCount();
+            const payment = await paymentCollection.find().toArray();
+            const revenue = payment.reduce((sum, item) => sum + item.price, 0)
+
+            res.send({
+                users, products, orders, revenue
+            })
         })
+
 
 
 
@@ -223,6 +241,7 @@ async function run() {
         // await client.close();
     }
 }
+
 run().catch(console.dir);
 
 
